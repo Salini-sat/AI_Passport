@@ -58,6 +58,7 @@ def _run_all_agents(product: dict) -> dict:
     Parallel execution cuts analysis time from
     ~25s sequential to ~8s concurrent.
     """
+    
     agents = {
         "visibility":    run_visibility_agent,
         "hallucination": run_hallucination_agent,
@@ -269,8 +270,10 @@ def analyze_store(
     start = time.time()
 
     for i, product in enumerate(products, 1):
+        
         print(f"\n[orchestrator] Product {i}/{len(products)}: {product['title']}")
-
+        if i > 1:
+            time.sleep(5)
         # Run all 5 agents in parallel
         agent_results = _run_all_agents(product)
 

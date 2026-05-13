@@ -272,6 +272,54 @@ def fetch_store_data(limit: int = 5) -> dict:
     }
 
 
+def fetch_store_data_public(store_domain: str, limit: int = 3) -> dict:
+    """
+    Fetches products from ANY public Shopify store.
+    Uses open /products.json — no API token needed.
+    Used for competitor analysis.
+    """
+    domain   = store_domain.strip().rstrip("/").replace("https://", "").replace("http://", "").split("/")[0]
+    url      = f"https://{domain}/products.json?limit={limit}"
+    print(f"[scraper] Fetching public store: {url}")
+
+    response = httpx.get(url, timeout=15, follow_redirects=True)
+    response.raise_for_status()
+
+    raw_products = response.json().get("products", [])
+    if not raw_products:
+        raise ValueError(f"No products found at {url}")
+
+    products = []
+    for p in raw_products:
+        first_variant = p["variants"][0] if p.get("variants") else {}
+        products.append({
+            "id":           f"gid://shopify/Product/{p['id']}",
+            "title":        p.get("title", ""),
+            "description":  p.get("body_html", ""),
+            "product_type": p.get("product_type", ""),
+            # Same line, same fix
+            "tags": p["tags"] if isinstance(p["tags"], list) else [t.strip() for t in p["tags"].split(",")] if p.get("tags") else [],
+            "status":       "ACTIVE",
+            "updated_at":   p.get("updated_at", ""),
+            "store_url":    None,
+            "seo":          {"title": "", "description": ""},
+            "images":       [{"url": img.get("src",""), "alt": img.get("alt")} for img in p.get("images", [])],
+            "variants": [{
+                "id":                str(first_variant.get("id", "")),
+                "title":             first_variant.get("title", ""),
+                "price":             first_variant.get("price"),
+                "compare_at_price":  first_variant.get("compare_at_price"),
+                "available":         first_variant.get("available", False),
+                "inventory":         None,   # not public
+                "sku":               first_variant.get("sku", ""),
+            }],
+            "options":     p.get("options", []),
+            "metafields":  [],   # not public
+            "collections": [],
+        })
+
+    return {"products": products, "collections": []}
+
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Quick test â€” run this file directly to check
 # your credentials work before building agents:
