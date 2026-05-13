@@ -415,7 +415,7 @@ http://localhost:8000        ← health check
 ## Demo Script (60 seconds)
 
 1. Paste store URL → click Analyze → watch agents run live
-2. Show dashboard: **66/100**, **$1,054/month at risk**, 3/3 products invisible
+2. Show dashboard: **66/100**, **$1,054/month at risk**, 2/3 products invisible
 3. Go to Perceive → type "best snowboard for beginners"
 4. **Before:** `can_answer_query: false`, confidence 40%, products skipped
 5. **After** (apply fixes): `can_answer_query: true`, confidence 80%, product recommended with reason
