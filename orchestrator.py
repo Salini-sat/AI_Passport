@@ -339,7 +339,7 @@ if __name__ == "__main__":
     for p in passport["products"]:
         print(f"  {p['title'][:40]:<40} {p['overall_score']:>3}/100")
         for agent, score in p["scores"].items():
-            bar = "â–ˆ" * (score // 10) + "â–‘" * (10 - score // 10)
+            bar = "#" * (score // 10) + "-" * (10 - score // 10)
             print(f"    {agent:<14} {bar} {score}")
 
     print(f"\nTOP ACTION PLAN (product 1):")
