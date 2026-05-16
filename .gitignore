@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+backend/.env
+.env
+
+# Node
+frontend/passport-app/node_modules/
+frontend/passport-app/dist/
+frontend/passport-app/.env
